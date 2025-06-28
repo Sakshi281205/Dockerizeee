@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dockerized Flask App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .status {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #2e7d32;
+        }
+
+        .api-section {
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .api-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 5px;
+        }
+
+        .endpoint {
+            background: #f5f5f5;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            border-left: 4px solid #667eea;
+        }
+
+        .method {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .url {
+            color: #333;
+        }
+
+        .description {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s;
+        }
+
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+
+        .result {
+            background: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .docker-info {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🐳 Dockerized Flask App</h1>
+        <p class="subtitle">Successfully running in a Docker container!</p>
+        
+        <div class="status">
+            ✅ Application is running and healthy
+        </div>
+
+        <div class="docker-info">
+            <strong>Container Information:</strong><br>
+            This Flask application is running inside a Docker container with optimized settings for production deployment.
+        </div>
+
+        <div class="api-section">
+            <h3>Available API Endpoints</h3>
+            
+            <div class="endpoint">
+                <span class="method">GET</span> <span class="url">/api/health</span>
+                <div class="description">Check application health status</div>
+                <button class="test-button" onclick="testHealth()">Test Health</button>
+                <div id="health-result" class="result" style="display: none;"></div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method">GET</span> <span class="url">/api/info</span>
+                <div class="description">Get application information</div>
+                <button class="test-button" onclick="testInfo()">Test Info</button>
+                <div id="info-result" class="result" style="display: none;"></div>
+            </div>
+
+            <div class="endpoint">
+                <span class="method">POST</span> <span class="url">/api/echo</span>
+                <div class="description">Echo back JSON data</div>
+                <button class="test-button" onclick="testEcho()">Test Echo</button>
+                <div id="echo-result" class="result" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function testHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                const resultDiv = document.getElementById('health-result');
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function testInfo() {
+            try {
+                const response = await fetch('/api/info');
+                const data = await response.json();
+                const resultDiv = document.getElementById('info-result');
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        async function testEcho() {
+            try {
+                const testData = {
+                    message: "Hello from the frontend!",
+                    timestamp: new Date().toISOString()
+                };
+                
+                const response = await fetch('/api/echo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const data = await response.json();
+                const resultDiv = document.getElementById('echo-result');
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html> 
